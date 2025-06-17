@@ -12,22 +12,35 @@ import { AuthService } from './auth.service';
 export class AppComponent implements OnInit {
   users: any = null;
   error: string | null = null;
+  token: string | null = null;
+  
 
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService) {this.getToken();}
 
   ngOnInit(): void {
+    // Verificar o token a cada 1 segundo pois a função getAccessToken() é assíncrona
+    setInterval(() => {
+      this.getToken();
+    }, 1000);
+
     if (window.location.href.includes('code=')) {
       this.auth.completeLogin().then(() => {
         window.history.replaceState({}, '', '/');
       });
     }
+    
   }
 
-  login() {
+  getToken() {
+    this.token = this.auth.getAccessToken() ?? "<< No Token >>";
+  }
+
+  login() {    
     this.auth.login();
   }
 
   logout() {
+    
     this.auth.logout();
   }
 

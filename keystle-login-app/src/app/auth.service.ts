@@ -5,6 +5,7 @@ import {
   UserManager,
   WebStorageStateStore,
 } from 'oidc-client-ts';
+import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,11 +13,13 @@ export class AuthService {
   private user: User | null = null;
 
   constructor() {
+    console.log("PP> AuthService constructor()");
+    console.log("PP> environment = ", environment);
     this.userManager = new UserManager({
-      authority: 'https://idm.keystle.io/cyberclan-b2b/oidc',
-      client_id: 'poc-auth-keystle',
-      redirect_uri: 'http://localhost:4200/callback',
-      post_logout_redirect_uri: 'http://localhost:4200',
+      authority: environment.authority,
+      client_id: environment.clientId,
+      redirect_uri: environment.redirectUri,
+      post_logout_redirect_uri: environment.postLogoutRedirectUri,
       response_type: 'code',
       scope: 'openid profile email',
       userStore: new WebStorageStateStore({ store: window.localStorage }),
@@ -44,9 +47,10 @@ export class AuthService {
   }
 
   async fetchUsers() {
+    console.log("PP> fetchUsers()");
     const token = this.getAccessToken();
     console.log("PP> token = ", token);
-    if (!token) throw new Error('Token não encontrado');
+    if (!token) throw new Error('Token not found');
 
     const res = await fetch(`https://api.keystle.io/clients/poc-auth-keystle/users`, {
       headers: {
