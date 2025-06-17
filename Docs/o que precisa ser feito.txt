@@ -1,0 +1,7 @@
+[15:23, 16/06/2025] Vitor Mauricio: o que precisa ser feito, só para vc se ligar
+
+[15:24, 16/06/2025] Vitor Mauricio: uma tela que o cara coloca o usuário e senha e ganha o token, usando as APIs da Keystle, sacou? ele tem que devolver apenas se o usuário estiver na base de dados deles
+
+[15:24, 16/06/2025] Vitor Mauricio: imagino que exija duplo fator de autenticação
+
+[15:25, 16/06/2025] Vitor Mauricio: agora se o usuário veio da autenticação do seu tenant, aí não sei o que rola, depois teremos que configurar contra o AAD da VH e ver como funciona, primeiro tenta um usuário e senha criados na plataforma deles, sacou?

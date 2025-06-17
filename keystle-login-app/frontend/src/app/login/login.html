@@ -1,0 +1,30 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="header">
+      <h1>Keystle Authentication</h1>
+      <p>Entre com sua conta para acessar o sistema</p>
+    </div>
+    
+    <div class="logo">
+      <img src="assets/keystle-logo.png" alt="Keystle Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Keystle'; this.onerror='';"> 
+    </div>
+    
+    <div class="login-options">
+      <button 
+        class="login-button" 
+        (click)="login()" 
+        [disabled]="isLoading">
+        <span *ngIf="!isLoading">Entrar com Keystle</span>
+        <span *ngIf="isLoading">Carregando...</span>
+      </button>
+    </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <div class="footer">
+      <p>Demo de integração com Keystle para autenticação OAuth</p>
+    </div>
+  </div>
+</div>

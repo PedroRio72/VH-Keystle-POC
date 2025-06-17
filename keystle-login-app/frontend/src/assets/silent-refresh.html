@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<body>
+<script>
+  // Este arquivo serve para o silent refresh do token OAuth
+  // Será usado pelo angular-oauth2-oidc para atualizar silenciosamente os tokens
+  window.onload = function() {
+    // Envia a resposta para a janela principal (aplicativo Angular)
+    window.parent.postMessage(location.hash || location.search, location.origin);
+  };
+</script>
+</body>
+</html>
