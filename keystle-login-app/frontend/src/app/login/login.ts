@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
     this.errorMessage = null;
     try {
       this.authService.login();
+      this.isLoading = false;
       // O redirecionamento é feito pelo serviço OAuth
     } catch (error) {
       this.isLoading = false;

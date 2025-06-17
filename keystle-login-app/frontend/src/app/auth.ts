@@ -3,26 +3,37 @@ import { Router } from '@angular/router';
 import { OAuthService, AuthConfig } from 'angular-oauth2-oidc';
 import { BehaviorSubject } from 'rxjs';
 
-// Configuração do OAuth para o Keystle
-const oauthConfig: AuthConfig = {
-  // Substitua com o seu Client ID registrado no Keystle
-  clientId: 'your-client-id',
+// Configurações para OAuth
+const authConfig: AuthConfig = {
+  // URI para onde os usuários serão redirecionados após o login
+  redirectUri: window.location.origin + '/callback',
   
-  // A URL base do seu provedor de identidade Keystle
+  // ID do cliente registrado no provedor OAuth
+  clientId: 'poc-auth-keystle',
+  
+  // URI do emissor/provedor de identidade
   issuer: 'https://idm.keystle.io/cyberclan-b2b/oidc',
   
-  // URL para onde o usuário será redirecionado após o login
-  redirectUri: window.location.origin + '/callback',
+  // URL para logout
+  logoutUrl: 'https://idm.keystle.io/cyberclan-b2b/oidc/logout',
   
   // Escopos solicitados
   scope: 'openid profile email',
   
-  // Tipo de resposta esperada
+  // Fluxo de autenticação usado (Authorization Code com PKCE)
   responseType: 'code',
   
-  // Código de desafio para segurança adicional (PKCE)
-  // O PKCE será habilitado na configuração do serviço
+  // Recuperar token de acesso
+  requestAccessToken: true,
   
+  // Usar OIDC para obter informações do usuário
+  oidc: true,
+  
+  // Não usar popups
+  useSilentRefresh: false,
+  
+  
+
   // Configurações para permitir renovação silenciosa de tokens
   silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
   
@@ -35,13 +46,15 @@ const oauthConfig: AuthConfig = {
   // ou configurados manualmente ao inicializar o serviço
 };
 
+// Não precisamos de constantes adicionais, usamos diretamente authConfig
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  // Observáveis para controlar o estado de autenticação e o perfil do usuário
   private userProfileSubject = new BehaviorSubject<any>(null);
   public userProfile$ = this.userProfileSubject.asObservable();
-  
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
@@ -65,7 +78,9 @@ export class AuthService {
 
   // Configuração inicial do serviço OAuth
   private configureOAuth() {
-    this.oauthService.configure(oauthConfig);
+    this.oauthService.configure(authConfig);
+    // Ativar PKCE programaticamente
+    (this.oauthService as any).usePKCE = true;
     
     // Tentar carregar o documento de descoberta
     this.oauthService.loadDiscoveryDocument().then(() => {
@@ -85,9 +100,44 @@ export class AuthService {
     });
   }
 
-  // Iniciar o processo de login
   public login() {
-    this.oauthService.initCodeFlow();
+    console.log('Iniciando fluxo de login com método padrão');
+    
+    // Tenta iniciar o fluxo usando a biblioteca
+    this.oauthService.initLoginFlow();
+  }
+
+  // public login() {
+  //   // URL fixa para testes
+  //   const authorizationUrl = 'https://idm.keystle.io/cyberclan-b2b/oidc/auth';
+    
+  //   // Adicionar parâmetros
+  //   const params = new URLSearchParams();
+  //   params.set('client_id', 'poc-auth-keystle');
+  //   params.set('redirect_uri', window.location.origin + '/callback');
+  //   params.set('response_type', 'code');
+  //   params.set('scope', 'openid profile email');
+  //   params.set('state', this.generateRandomState());
+    
+  //   // URL completa
+  //   const fullUrl = `${authorizationUrl}?${params.toString()}`;
+  //   console.log('Tentando URL:', fullUrl);
+    
+  //   window.open(fullUrl, '_blank');
+  // }
+
+  // Helper method para configurar o objeto OAuth
+  private configureOAuthObject(): AuthConfig {
+    return authConfig;
+  }
+  
+  // Gerar um estado aleatório para segurança
+  private generateRandomState(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 
   // Logout do usuário
