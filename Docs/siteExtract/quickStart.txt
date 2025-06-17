@@ -1,0 +1,27 @@
+Quick Start
+This guide will walk you through making your first Keystle API request.
+
+Making Your First API Request
+Let's list all users.
+
+Authenticating with OIDC
+For the example, we will be using the oidc-clients-ts library:
+
+const token = await oidcClient.getAccessToken();  //your function to generate a token
+
+Example in the Back-End
+GET /clients/{client_id}/users
+
+Header	Value
+Host	https://api.keystle.io
+Authorization	Bearer: YOUR_ACCESS_TOKEN
+x-tenant-id	YOUR_TENANT_ID
+Example in the Front-End
+fetch("https://api.keystle.io/clients/{client_id}/users", {
+    method: "GET",
+    headers: {
+        Authorization: `Bearer: ${accessToken} `,
+        "x-tenant-id": "seu-tenant-id"
+    }
+});
+

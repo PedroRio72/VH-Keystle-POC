@@ -1,0 +1,14 @@
+<h1>Keystle OIDC + Angular</h1>
+
+<button (click)="login()">Login com Keystle</button>
+<button (click)="getUsers()">Listar Usuários</button>
+<button (click)="logout()">Logout</button>
+
+<div *ngIf="users">
+  <h2>Usuários:</h2>
+  <pre>{{ users | json }}</pre>
+</div>
+
+<div *ngIf="error">
+  <p style="color: red">{{ error }}</p>
+</div>

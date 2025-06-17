@@ -1,0 +1,147 @@
+B2B Authentication
+Providing exceptional services to your users hinges on robust and reliable user authentication. This essential process, vital for identifying and verifying your users, is at the core of any secure and engaging platform. We empower you to go beyond basic security with multi-factor authentication (MFA) and a suite of advanced features, ensuring both ironclad protection and a frictionless user experience.
+
+Best Practices for B2B Authentication
+Designing your user authentication system requires a delicate balance between security and user experience. Our approach enables you to offer multiple primary authentication factors and enforce multi-factor authentication, achieving both without compromise.
+
+When designing your system, here’s what we help you consider and optimize:
+
+Credential Entry & Security: Where and how will users submit their credentials? We ensure the highest standards for safeguarding user information.
+System Maintainability: How will your authentication system evolve and be maintained? We provide scalable and manageable solutions.
+Flexible Password Authentication: How can you offer secure password-based logins? We provide versatile options tailored to your needs.
+Proactive Threat Prevention: How can you stop malicious login attempts? Our advanced features, including attack protection, are designed to thwart hackers.
+Seamless Application Integration: How will authentication work across various application types? We guide you through seamless integration for all your platforms.
+Global User Experience: How can you make login easy for users from diverse linguistic backgrounds? Our solutions offer out-of-the-box internationalization.
+Smooth Legacy Migration: How will you ensure a positive user experience when migrating from existing authentication systems? We facilitate smooth transitions.
+Optimized Keystle Integration: What are the key considerations for integrating your applications with Keystle? We provide expert guidance for maximizing your Keystle investment.
+Strategic MFA Implementation: Do you need to provide multi-factor authentication? We help you determine the optimal approach and deploy it effectively.
+Non-Interactive Service Authentication: How do you handle authentication for services without a direct user login? We offer solutions for machine-to-machine (M2M) authorization.
+Token Management: Can you seamlessly pass user access tokens between APIs? We ensure secure and efficient token flow.
+Organizational User Isolation: What if you need to isolate users by organization? We provide robust solutions for multi-tenancy.
+Organizational Identification: How will you identify which organization users belong to? We streamline the process of associating users with their respective organizations.
+Enterprise Connection Benefits: What are the advantages of providing enterprise connections for your organizations? We highlight the value of simplified B2B access.
+Universal Login: The Core of a Secure Experience
+Leveraging Keystle's Universal Login, we provide your users with a secure and intuitive experience, whether they prefer traditional username/password sign-in or "Bring Your Own Identity" (BYOI) scenarios via social logins. Universal Login centralizes the login experience, offering significant brand recognition benefits, even if you have product-specific branding requirements. The integrated UI widgets offer out-of-the-box internationalization support, while built-in Keystle features like MFA and attack protection fortify your defenses against unauthorized access.
+
+Empowering users with username/password credentials means you're not solely reliant on third-party identity providers for system access. This also allows you to enforce corporate password policies. We support various username/password login options and provide guidance on leveraging them effectively. Adding social login as an additional primary authentication factor enhances flexibility and provides valuable user insights without further questioning.
+
+For those with existing identity stores, our "User Migration" section elaborates on the security advantages of transitioning to Keystle's managed identity storage.
+
+Modern Application Integration
+For customer-facing applications, OpenID Connect (OIDC) is the industry standard protocol, and through Keystle, we provide first-class support. We offer guidance on various application integration approaches, ensuring you make informed choices for your specific needs.
+
+When one API calls another, or in non-user authenticated contexts (e.g., cron jobs, report generators, CI/CD systems), you need to authorize the application itself. This streamlined, one-step process authenticates and authorizes the application using a client ID and secret.
+
+Many companies need to segregate users by organization, and users may even belong to multiple organizations. Understanding your company's needs helps define how to determine a user's connection—whether, when, and how to implement it.
+
+Universal Login: Centralized & Seamless Access
+Do you have, or are you planning to have, more than one application in your system? If so, a centralized sign-in experience is crucial. Achieving seamless Single Sign-On (SSO) across multiple applications requires a central point for user authentication. This provides a consistent user experience if you add social authentication, third-party applications, or MFA as an option or requirement. It also allows you to leverage new features with minimal development effort.
+
+Best Practice for Universal Login
+For multiple applications, the best practice is to redirect users to a centralized authentication location. Leveraging Keystle's Universal Login provides inherent security and user experience benefits, including SSO.
+
+Keystle Universal Login simplifies user authentication into three easy steps (demonstrated in our Quickstarts and abstracted by our SDKs):
+
+Redirection Strategy: Determine how and when to redirect from your application.
+Branding & Customization: Set up appropriate branding and/or customized HTML within your Keystle configuration.
+Response Handling: Configure your application to receive and process the response from the Authorization Server.
+Username and Password Authentication
+Almost every B2C application allows customers to create credentials, a familiar and common authentication method. Username/password authentication comes in multiple flavors through Keystle. For new applications, a simple Keystle out-of-the-box Database Connection provides everything you need. If you have a legacy user store (e.g., your own database or an LDAP system), our "User Migration" guidance outlines your migration options.
+
+Regardless of how users are provisioned, authentication is similar. It involves presenting users with a form to enter their username and password. As discussed with Universal Login, the simplest and safest approach is to redirect users to a centralized login page. This allows Keystle to detect existing sessions and skip the login form when unnecessary.
+
+Best Practice for Username & Password Authentication
+Collecting credentials solely at the centralized login page minimizes the risk of user secret exposure and prevents unnecessary credential collection. See "Universal Login" for more information.
+
+Application Integration
+Once you've decided on your authentication method, the next step is to determine how to initiate it within each application.
+
+Native mobile and desktop applications should use the system browser for authentication to avoid security risks. See "Native vs. Browser Login on Mobile" for more details.
+
+Most of our customers utilize OpenID Connect (OIDC) as the industry-standard protocol for customer-facing applications. Your first task is to choose the appropriate OIDC flow, starting with our grant mapping guidance.
+
+If your application allows anonymous user access, you need to decide whether to redirect immediately or prompt users for redirection only when required (or a combination). If users can deep link to protected sections, you'll need to identify which links will trigger an automatic redirect to Keystle.
+
+Anonymous Access
+Consider the user experience when someone first accesses your application, especially if it supports anonymous access (common for e-commerce). Scenarios include:
+
+Returning Users: Have they already logged in?
+First-Time Access:
+Have they accessed another application using the same Keystle tenant?
+Have they ever (or recently) authenticated on this device or browser?
+When an anonymous user accesses your application, it's often desirable to determine if they've already logged into a related application or to remember them even if it's a stateless SPA. For example, if a user is already logged in, the UI header might display an account or profile menu instead of a login button. "Silent authentication" allows you to check for a login session without prompting the user to log in if they aren't. If the user is logged in, you'll receive tokens, eliminating the need for a login button.
+
+While checking for a login session by redirecting to Keystle can be helpful, for high request volumes, employ throttling to avoid latency and/or rate limiting.
+
+Calls to the Management API are subject to Keystle's Rate Limiting policy. We recommend using the appropriate Keystle SDK for your development environment instead of direct API calls.
+
+Deep Linking to Protected Endpoints
+Users may directly link to protected pages within your application. If this is possible, automatically redirect unauthenticated users to Keystle. After authentication, the authorization server returns them to your application, and you can redirect them to their intended destination.
+
+Best Practice for Deep Linking
+Most modern authentication frameworks support middleware for redirecting to an authorization server such as Keystle. When selecting one, here are some key considerations:
+
+Support for confidential clients, non-confidential clients, or both
+Support for configuration via discovery endpoint or explicitly inline
+Support for token validation including expirations, signatures, claims and scopes
+Support for Refresh Tokens if needed
+User Authentication
+Authentication is the process of verifying user identity. In an OIDC context, the result is an ID Token, containing user information, obtainable only if the user authenticates using one or more factors (commonly username/password). Besides obtaining an ID Token, consider:
+
+Access Token for Shared APIs: Do you need an Access Token to call a shared API?
+SPA ID Token Requirement: Is your application a single-page application requiring only an ID Token? See "Authorization Code Grant with PKCE" for details.
+Native App/Refresh Token Need: Is your application a native app (mobile/desktop) and/or do you need a Refresh Token? See "Authorization Code Grant with PKCE" for details.
+Before going live, ensure only the grants your application uses are enabled in your Keystle configuration.
+
+Authorization Code Grant (with or without PKCE)
+If your SDK only supports the Authorization Code grant, or you need an Access Token or Refresh Token, the Authorization Code grant (with or without PKCE) can retrieve an ID Token. This grant involves an additional API call to exchange the code for a token, which can introduce unnecessary latency if only an ID Token is needed. Often, the hybrid flow is implemented for optimal ID Token access while leveraging Authorization Code grant for secure retrieval of Access and Refresh Tokens.
+
+While Keystle supports the implicit grant for browser-based applications needing only an ID Token, the Authorization Code grant with PKCE is recommended. For detailed information, see "OAuth2 Implicit Grant and SPA" on the Keystle Blog.
+
+If you need a Refresh Token so that you can obtain new Access or ID Tokens without re-authenticating the user, then you must use the authorization code grant.
+
+Attack Protection
+Authentication systems are crucial for preventing unauthorized access to applications and user data. We aim to maximize barriers against bad actors. A key strategy is correctly configuring your Keystle attack protection. Take a moment to review the guidance and ensure it's properly set up.
+
+Best Practice for Attack Protection
+Keystle's anomaly detection works silently behind the scenes, offering a powerful security feature. If you utilize it, ensure your Email Provider and Email Templates are configured before enabling email delivery to your users.
+
+SSO with Legacy Systems
+In large-scale restructures, updating all applications simultaneously isn't always feasible or practical. We recommend an iterative integration approach with Keystle. If your applications already use Single Sign-On (SSO) and your legacy identity system supports protocols like OIDC or SAML, you have options for maintaining SSO during Keystle integration:
+
+Update your existing identity provider in your legacy SSO system to redirect to Keystle for login (e.g., using SAML).
+Configure Keystle to redirect to your legacy SSO system for login (i.e., configure your legacy system as an IdP in Keystle using SAML or OIDC).
+Best Practice for Legacy SSO
+Supporting SSO with your legacy system can add complexity but may create a more seamless user experience as you integrate with Keystle. Early planning is key. If you don't already have SSO at a centralized service, adding it now may not be worth the complexity.
+
+This is a complex topic requiring further investigation based on your legacy architecture. We recommend exploring this only if you currently have SSO support in your legacy system. Note: If your applications currently redirect to a centralized system for authentication that only asks for credentials if you lack a session, you have a legacy SSO implementation.
+
+Enterprise Login
+The "Bring Your Own Identity" (BYOI) scenario is a must-have for nearly all B2B applications. Most enterprise companies expect to integrate their Identity Provider (IdP) with your application, eliminating the need for their employees to manage additional credentials. This simplifies user authentication without compromising security. Universal Login makes it easy to add Enterprise Connections with minimal disruption.
+
+Best Practice for Enterprise Login
+Once you support enterprise connections, you must implement some form of Home Realm Discovery to direct the user to the correct connection for authentication.
+
+With enterprise connection support, user identities and credentials, along with certain identity claims, are managed by your customers' organization's identity provider. Keystle uses these claims to populate the user profile.
+
+Best Practice for BYOI Account Linking
+BYOI is a great feature. However, organizations may want to switch to their own IdP after using your application for a while, even if you support BYOI from day one. You'll need a way to link user accounts, effectively associating the new identity with the existing database identity.
+
+Multi-Factor Authentication (MFA)
+In an era of rampant credential misuse, protecting your systems from stolen identity information is challenging. One of the most effective solutions is empowering users to configure a second factor for account protection, commonly known as Multi-Factor Authentication (MFA). This ensures only valid users access their accounts, even if their username and password have been compromised elsewhere.
+
+Best Practice for MFA
+For customer-facing applications, it's common to offer users the option to add a second factor rather than forcing it. For more information regarding this, see providing your users with an option to add MFA.
+
+Keystle supports various MFA options, ensuring a flexible second-factor barrier:
+
+Keystle Guardian: Provides Push notifications and an application for approving/denying requests. Push sends notifications to a user's registered mobile device for immediate allow/deny actions.
+Time-based One-Time Password (TOTP): Allows registration of a device (e.g., Google Authenticator) to generate time-sensitive one-time passwords for validation.
+SMS: Sends a one-time code via SMS, which the user enters to complete authentication.
+Voice: Delivers a one-time code via phone call, which the user enters to complete authentication.
+Duo: Integrates with your Duo account for multi-factor authentication.
+Email: Uses your email account for multi-factor authentication.
+While MFA workflows using technologies like Guardian or Google Authenticator typically rely on separate mobile applications, if you prefer not to have your customers download an additional app, Keystle provides an SDK to build second-factor workflows directly into your existing mobile applications.
+
+Multiple Organization Architecture (Multitenancy)
+Many B2B platforms implement some form of isolation and/or branding for their customer organizations, which can add complexity to any Identity and Access Management (IAM) system. If this applies to you, we recommend reviewing our guidance and best practice advice for this type of environment.

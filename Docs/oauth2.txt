@@ -1,0 +1,111 @@
+OAuth 2.0
+OAuth 2.0 is an industry-standard protocol for authorization that enables third-party applications to obtain limited access to a user's account.
+
+OIDC
+Keystle uses Open ID Connect (OIDC) to ensure secure requests to our endpoints. OIDC is an identity authentication protocol that extends OAuth 2.0 to standardize the process for authenticating and authorizing users when they sign in to access digital services.
+
+Setting Up OAuth 2.0
+Register Your Application
+Log in to your API Beacon dashboard
+Navigate to OAuth2 Applications in the sidebar
+Click Create New Application
+Enter the required information:
+Application name
+Redirect URIs
+Application type (web, native, single-page)
+Scopes needed
+Click Create Application
+Save your Client ID and Client Secret
+Authorization Code Flow
+The most common flow for web applications with a server-side component.
+
+Step 1: Redirect to Authorization Endpoint
+Redirect your user to our authorization endpoint:
+
+GET https://idm.keystle.net/keystle/oidc/auth
+
+
+Parameters:
+
+client_id: Your application's Client ID
+redirect_uri: A URI registered with your application
+response_type: Set to code
+scope: Space-separated list of requested scopes
+state: A random string to prevent CSRF attacks
+Example:
+
+https://idm.keystle.net/keystle/oidc/auth?
+  client_id=YOUR_CLIENT_ID&
+  redirect_uri=https://your-app.com/callback&
+  response_type=code&
+  scope=read:users write:users&
+  state=random_state_string
+
+Step 2: Exchange Code for Tokens
+After the user authorizes your application, they'll be redirected to your redirect_uri with a temporary code:
+
+GET https://your-app.com/callback?code=TEMPORARY_CODE&state=random_state_string
+
+
+Exchange this code for access and refresh tokens:
+
+JavaScript
+const tokenResponse = await fetch('https://idm.keystle.net/keystle/oidc/oauth/token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  body: new URLSearchParams({
+    grant_type: 'authorization_code',
+    client_id: 'YOUR_CLIENT_ID',
+    client_secret: 'YOUR_CLIENT_SECRET',
+    code: 'TEMPORARY_CODE',
+    redirect_uri: 'https://your-app.com/callback',
+  }),
+});
+
+const tokens = await tokenResponse.json();
+// Store tokens.access_token and tokens.refresh_token securely
+
+
+Refreshing Access Tokens
+Access tokens expire after a set period. Use refresh tokens to get new access tokens:
+
+JavaScript
+const refreshResponse = await fetch('https://idm.keystle.net/keystle/oidc/oauth/token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  body: new URLSearchParams({
+    grant_type: 'refresh_token',
+    client_id: 'YOUR_CLIENT_ID',
+    client_secret: 'YOUR_CLIENT_SECRET',
+    refresh_token: 'YOUR_REFRESH_TOKEN',
+  }),
+});
+
+const newTokens = await refreshResponse.json();
+// Update stored access token with newTokens.access_token
+
+
+OAuth 2.0 Scopes
+Scopes define the specific actions that an application can perform on behalf of a user:
+
+Scope	Description
+read:users	View user information
+write:users	Create and update users
+delete:users	Delete users
+read:roles	View role information
+write:roles	Create and update roles
+read:permissions	View permission information
+write:permissions	Create and update permissions
+Request only the scopes your application needs to function properly.
+
+Security Considerations
+Store client secrets securely on your server, never in client-side code
+Always validate the state parameter when receiving the authorization code
+Store tokens securely and transmit them only over HTTPS
+Implement proper error handling for authentication failures
+Refresh tokens before they expire to maintain a seamless user experience
+Consider implementing token revocation when users log out

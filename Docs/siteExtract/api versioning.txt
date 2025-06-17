@@ -1,0 +1,43 @@
+API Versioning
+This page explains how our API versioning works and how to ensure compatibility with your applications.
+
+Versioning Strategy
+We WILL use URL path versioning for our API. The version will be included in the base URL:
+
+https://api.keystle.io/v1/
+
+This approach ensures that:
+
+Existing client applications continue to work as expected
+New features and breaking changes can be introduced without disrupting existing integrations
+Clients can choose when to upgrade to newer versions
+Current Versions
+Version	Status	Release Date	End of Life
+v1	TBD	TBD	TBD
+Version Lifecycle
+Each API version goes through the following lifecycle:
+
+Beta – Early access for testing and feedback
+Current – Stable version with full support
+Deprecated – Still available but will be removed in the future
+Retired – No longer available
+How to Use Versioned APIs
+Setting the API Version
+Include the version in the URL when making API requests:
+
+cURL
+curl "https://api.keystle.io/v1/users" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+JavaScript
+import { ApiBeacon } from '@api-beacon/client';
+
+// Specify the API version in the baseUrl
+const apiClient = new ApiBeacon({
+  apiKey: 'YOUR_API_KEY',
+  baseUrl: 'https://api.keystle.io/v1',
+});
+
+// Make requests as usual
+const users = await apiClient.users.list();
+

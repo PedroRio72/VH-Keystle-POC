@@ -1,0 +1,127 @@
+B2B Authorization
+Introduction to Access Control in Keystle
+Access Control is a fundamental and multi-faceted concept ensuring only authenticated and authorized users can perform specific actions on specific resources. It's the gatekeeper of your system, encompassing Authentication (verifying identity), Authorization (determining permissions), Consent (user approval), and Policy Enforcement ( applying rules).
+
+Keystle implements these critical concepts using industry-leading identity standards like OAuth 2.0 for secure API authorization, OpenID Connect (OIDC) for user authentication, and SAML 2.0 for enterprise single sign-on. Our technical foundation includes Zitadel as a powerful identity management backend, complemented by a custom SAML library for broad compatibility. Keystle acts as an extensible Authorization Server for B2B, B2C, and * Workforce Identity scenarios.
+
+Going Beyond Traditional Authorization
+While Role-Based Access Control (RBAC) is common, Keystle elevates security with more advanced, dynamic models. We implement Attribute-Based Access Control (ABAC), which makes access decisions by evaluating attributes of the user, resource, environment, and action, enabling highly flexible and context-aware rules. For instance, access might depend on a user's department, the time of day, or data sensitivity. Additionally, Permission-Based Access Control (PBAC) focuses on individual permissions directly granted to users or groups, offering unparalleled granularity by defining exactly what an entity can or cannot do.
+
+These sophisticated models empower Keystle to provide dynamic, fine-grained authorization. This means access decisions are evaluated in real-time based on factors like the Resource Type (e.g., customer record), the specific Resource* instance (e.g., a particular account), and the Actions a user attempts (e.g., read, delete). By leveraging ABAC and PBAC, Keystle ensures flexible and powerful policy enforcement crucial for modern, multi-tenant applications and APIs, adapting to each tenant's unique requirements and offering granular control over every interaction.
+
+Core Concepts of Authorization
+Understanding the foundational elements of authorization is key to building secure and efficient applications. Keystle provides a comprehensive framework to manage these core concepts.
+
+Authorization
+Authorization determines what actions an authenticated user or application can perform on specific resources. Keystle's capabilities in this area include defining scopes and permissions specific to each client or application. This allows for precise control over broad access categories (scopes) and individual actions (permissions). Beyond static definitions, Keystle employs dynamic policies through ABAC and PBAC, ensuring access decisions are adaptable and context-aware. Furthermore, authorization information is embedded as custom claims within tokens, providing verifiable data that applications and APIs can quickly leverage for access decisions.
+
+Consent
+In delegated authorization flows, especially with OAuth 2.0, Consent is vital. Keystle handles user consent explicitly during the login process, particularly when integrating with third-party applications. This ensures users are fully aware of and approve the data access or actions requested by an application on their behalf, upholding privacy and compliance.
+
+Policy Enforcement
+While Keystle is responsible for issuing ID Tokens (for identity) and Access Tokens (for authorization) with embedded claims, the actual Policy Enforcement occurs at several points within your application architecture. This multi-layered approach ensures robust security.
+
+Your APIs, acting as resource servers, serve as primary enforcement points. They receive and validate Access Tokens, inspecting embedded claims and scopes to confirm the principal's authorization for the requested operation. Additionally, client applications (e.g., web or mobile apps) contribute to enforcement, often referred to as UI-level or "soft" enforcement. They control which UI components are displayed or enabled based on user permissions, improving user experience by only showing relevant options. For highly complex or dynamic authorization, Keystle supports integration with External Policy Decision Points (PDPs), such as Open Policy Agent (OPA). OPA allows you to offload dynamic ABAC enforcement, enabling your application or API to query OPA for real-time authorization decisions based on centrally managed policies.
+
+Access Control Categories
+Keystle categorizes access control to provide precise management across different layers of your application, ensuring comprehensive security.
+
+Application-Level Access
+This category involves granting or denying full access to an entire application or API. Decisions are made based on the user's identity, the client application's defined scopes, or custom logic. For example, you might allow only users from a specific tenant to access a partner dashboard, completely blocking others from the application itself.
+
+Feature-Level Access
+Here, access is controlled for particular functionalities or sections within an application. Instead of denying access to the entire app, you can restrict specific features. A common use case is to hide billing features for users without a specific billing:view permission, ensuring only authorized personnel can see sensitive financial information.
+
+Resource-Level Access
+This is the most granular level of control, where access to a specific resource is determined dynamically. Decisions are often based on attributes of the subject (the user) and the resource's ownership or other associated properties. For instance, you might allow users to update only projects where they are explicitly listed as owners, even if they have general "project:edit" permissions. This prevents unauthorized modifications to projects they don't oversee.
+
+RBAC, ABAC, and PBAC in Keystle
+Keystle supports a range of authorization models to fit your specific needs:
+
+Role-Based Access Control (RBAC): This traditional model assigns roles to users, typically at the tenant level or through group memberships. These roles are then linked to specific permissions, such as users:create (allowing user creation) or projects:edit (allowing project modification). RBAC simplifies management by grouping permissions under meaningful roles.
+
+Attribute-Based Access Control (ABAC): ABAC takes authorization beyond static roles by evaluating various attributes of the user and the resource in real time. This allows for highly flexible and context-aware policies. For example, a policy could state:
+
+allow {
+  input.subject.department == input.resource.department // User can read resources only if they are in the same department as the resource
+  input.action == "read"
+}
+
+
+This dynamic approach ensures that access decisions are precise and adaptable, enabling complex authorization logic. Keystle also leverages Permission-Based Access Control (PBAC) to offer even finer granularity, directly granting specific permissions to entities rather than relying solely on roles.
+
+Permission-Based Access Control (PBAC)
+Permission-Based Access Control (PBAC) provides fine-grained access control by explicitly defining what actions are allowed on specific types of resources. Rather than relying solely on broad roles or user attributes, PBAC focuses on what users can do with which resources.
+
+{
+  "permissions": [
+    {
+      "resource-type": { "resource": ["actions"]}
+    }
+  ]
+}
+
+Below is an example of a PBAC structure embedded in a Keystle token, where permissions are granted per resource type. The key within the resource object represents the resource-type, and its array value lists the actions permitted for that resource type. The "*" wildcard indicates that the actions apply to all instances of the given resource type.
+
+{
+  "permissions": [
+    {
+      "applications": { "*": [ "delete", "view", "update", "create"]}
+    }
+  ]
+}
+
+Token Overview
+JWT (JSON Web Token), a standard, compact, and secure way to transmit information. It consists of three parts separated by dots: Header, Payload, and Signature.
+
+Where Would PBAC Permissions Appear?
+The power of PBAC with Keystle lies in its ability to dynamically inject these granular permission sets directly into the user's token based on their specific access rights, making authorization checks highly efficient at the application and API level without requiring constant database lookups.
+
+Token Types & Claims in Keystle
+Keystle leverages industry-standard JSON Web Tokens (JWTs) to securely transmit identity and authorization information. Understanding the different types of tokens and the claims they carry is crucial for building secure applications.
+
+ID Tokens
+ID Tokens are primarily used by client applications for authentication and to retrieve basic user information. When a user successfully logs in, Keystle issues an ID Token. This token asserts the user's identity and provides essential details.
+
+Standard Claims
+An ID Token typically contains standard claims like:
+
+sub (Subject): A unique identifier for the user.
+name: The user's full name.
+email: The user's email address.
+Custom Claims
+Beyond these standard claims, Keystle can include custom claims in ID Tokens. These provide additional context specific to your business logic, such as:
+
+org_id: The unique identifier for the organization or tenant the user belongs to.
+roles: The roles assigned to the user, like "admin" or "member".
+features: Flags or identifiers indicating specific features the user has access to at an application level.
+These custom claims allow applications to:
+
+Personalize the user experience
+Enforce high-level access rules immediately after authentication all without needing further API calls.
+Access Tokens
+Access Tokens are distinct from ID Tokens. Their primary purpose is to authorize access to protected APIs and resources.
+
+When a client application needs to call an API, it includes the Access Token in the request. The API (resource server) then validates this token to determine if the client, on behalf of the user, is authorized to perform the requested action.
+
+Common Claims
+Access Tokens typically contain claims relevant for authorization, such as:
+
+aud (Audience): Identifies the API or resource server for which the token is intended. The API must verify this claim to ensure it's the token's intended recipient.
+scope: Defines the broad permissions granted to the client application, such as "read:profile" or "write:data".
+permissions: This is where resource-level permissions (as described in PBAC) would be explicitly listed. For example:
+This provides fine-grained control over individual resources.
+
+Token Security and Verification
+Both ID Tokens and Access Tokens issued by Keystle are signed using cryptographic keys. This signature:
+
+Ensures the token's integrity and authenticity
+Guarantees it hasn't been tampered with
+Confirms it was issued by Keystle
+Token Verification
+Applications and APIs verify these tokens by retrieving Keystle's public signing keys from its JWKS (JSON Web Key Set) endpoint.
+
+This endpoint is a standard location where public keys are published.
+Applications use the appropriate public key from the JWKS to cryptographically verify the token’s signature.
+This mechanism is fundamental to the security of JWT-based authentication and authorization systems.
+
