@@ -36,6 +36,15 @@ export class AuthService {
 
   async completeLogin() {
     this.user = await this.userManager.signinRedirectCallback();
+    console.log("PP> Access Token:", this.user.access_token);
+    console.log("PP> Refresh Token:", this.user.refresh_token);
+    console.log("PP> Id Token:", this.user.id_token);
+    console.log("PP> User:", this.user.profile);
+    console.log("PP> Expires At:", this.user.expires_at);
+    console.log("PP> Expires In:", this.user.expires_in);
+    console.log("PP> Session State:", this.user.session_state);
+    console.log("PP> State:", this.user.state);
+    
   }
 
   getAccessToken(): string | null {
@@ -49,17 +58,28 @@ export class AuthService {
   async fetchUsers() {
     console.log("PP> fetchUsers()");
     const token = this.getAccessToken();
-    console.log("PP> token = ", token);
+    console.log("PP> token length = ", token ? token.length : 0);
+    console.log("PP> token first 20 chars = ", token ? token.substring(0, 20) + '...' : 'null');
+    
     if (!token) throw new Error('Token not found');
 
-    const res = await fetch(`https://api.keystle.io/clients/poc-auth-keystle/users`, {
+    // const res = await fetch(`https://api.keystle.io/clients/poc-auth-keystle/users`, {
+    const res = await fetch(`/api/clients/poc-auth-keystle/users`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
         'x-tenant-id': 'cyberclan-b2b',
+        'Content-Type': 'application/json'
       },
     });
 
-    if (!res.ok) throw new Error(`Erro: ${res.status}`);
+    console.log("PP> API Response Status:", res.status, res.statusText);
+    
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => 'No error details');
+      console.error("PP> API Error Details:", errorText);
+      throw new Error(`Erro: ${res.status} - ${res.statusText}`);
+    }
+    
     return await res.json();
   }
 }

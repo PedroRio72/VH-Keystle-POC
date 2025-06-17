@@ -1,0 +1,15 @@
+{
+  "/api": {
+    "target": "https://api.keystle.io",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "logLevel": "debug",
+    "headers": {
+      "Connection": "keep-alive"
+    },
+    "withCredentials": true
+  }
+}

@@ -1,15 +1,28 @@
-<h1>Keystle OIDC</h1>
+<div class="container">
+  <div class="panel">
+    <h1>Keystle OAuth2</h1>
+    
+    <div class="button-group">
+      <button (click)="login()">Login com Keystle</button>
+      <button *ngIf="token" id="copyTokenButton" (click)="copyToken()">Copy Token</button>
+      <!-- <button *ngIf="token" (click)="getUsers()">Listar Usuários</button> -->
+      <button *ngIf="token" (click)="logout()">Logout</button>
+    </div>
 
-<button (click)="login()">Login com Keystle</button>
-<button *ngIf="true" (click)="getToken()">Get Token</button>
-<button *ngIf="true" (click)="getUsers()">Listar Usuários</button>
-<button *ngIf="true" (click)="logout()">Logout</button>
+    <div *ngIf="users">
+      <h2>Usuários:</h2>
+      <pre>{{ users | json }}</pre>
+    </div>
 
-<div *ngIf="users">
-  <h2>Usuários:</h2>
-  <pre>{{ users | json }}</pre>
-</div>
-<p>Token: {{token}}</p>
-<div *ngIf="error">
-  <p style="color: red">{{ error }}</p>
+    <div *ngIf="token">
+      <h2>Token:</h2>
+      <div class="token-container">
+        <p>{{token}}</p>
+      </div>
+    </div>
+
+    <div *ngIf="error">
+      <p class="error-message">{{ error }}</p>
+    </div>
+  </div>
 </div>
